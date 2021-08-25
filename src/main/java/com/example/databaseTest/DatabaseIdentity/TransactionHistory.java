@@ -1,8 +1,6 @@
 package com.example.databaseTest.DatabaseIdentity;
 
 
-import com.example.databaseTest.ActionType;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -26,7 +24,7 @@ public class TransactionHistory {
 
     private String actionType;
 
-    private Integer volume;
+    private Integer quantity;
 
     private Double PriceAtTime;
 
@@ -34,8 +32,8 @@ public class TransactionHistory {
         this.actionType = actionType;
     }
 
-    public void setVolume(Integer volume) {
-        this.volume = volume;
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
 
@@ -81,8 +79,8 @@ public class TransactionHistory {
         return ticker;
     }
 
-    public Integer getVolume() {
-        return volume;
+    public Integer getQuantity() {
+        return quantity;
     }
 
     public Double getPriceAtTime() {
