@@ -17,6 +17,7 @@ public class User {
 
     private Double balance;
 
+
     public int getId() {
         return id;
     }
