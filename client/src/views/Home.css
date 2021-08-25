@@ -10,6 +10,7 @@
     margin-right: 2rem;
 }
 
+.portfolio-chart div,
 .portfolio-holder div {
     background-color: #424242;
     color: white;
@@ -17,7 +18,6 @@
 
 .portfolio-chart {
     width: 100%;
-    border: 1px solid black;
 }
 
 div.info {

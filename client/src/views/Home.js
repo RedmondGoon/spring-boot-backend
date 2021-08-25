@@ -8,8 +8,26 @@ import {
     Button,
 } from "@material-ui/core";
 import "./Home.css";
+import PortfolioChart from "../ui/PortfolioChart";
+import { deposit, withdraw } from "../service/portfolio";
 
 export default function Home() {
+    const depositForClient = async (clientID, amount) => {
+        try {
+            await deposit(clientID, amount);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const withdrawForClient = async (clientID, amount) => {
+        try {
+            await withdraw(clientID, amount);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
     return (
         <div className="home">
             <div className="portfolio-holder">
@@ -46,28 +64,33 @@ export default function Home() {
                                 </Typography>
                             </div>
                             <Divider />
-                            <div className="info">
-                                <Typography variant="h6" gutterBottom>
-                                    Dividence
-                                </Typography>
-                                <Typography variant="h6" gutterBottom>
-                                    S$500
-                                </Typography>
-                            </div>
-                            <Divider />
                         </CardContent>
                         <CardActions>
-                            <Button variant="contained" color="secondary">
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                onClick={() => {
+                                    depositForClient("clientID", 0);
+                                }}
+                            >
                                 Deposit
                             </Button>
-                            <Button variant="contained" color="secondary">
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                onClick={() => {
+                                    withdrawForClient("clientID", 0);
+                                }}
+                            >
                                 Withdraw
                             </Button>
                         </CardActions>
                     </Card>
                 </Paper>
             </div>
-            <div className="portfolio-chart">Portfolio Chart</div>
+            <div className="portfolio-chart">
+                <PortfolioChart />
+            </div>
         </div>
     );
 }
