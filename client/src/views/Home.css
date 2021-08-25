@@ -1,0 +1,27 @@
+.home {
+    display: flex;
+    padding: 2rem;
+}
+
+.portfolio-holder {
+    text-align: left;
+    width: 30%;
+    height: 100%;
+    margin-right: 2rem;
+}
+
+.portfolio-holder div {
+    background-color: #424242;
+    color: white;
+}
+
+.portfolio-chart {
+    width: 100%;
+    border: 1px solid black;
+}
+
+div.info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
