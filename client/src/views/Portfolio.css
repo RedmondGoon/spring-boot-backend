@@ -1,0 +1,23 @@
+.portfolio {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 2rem;
+}
+
+.portfolio-performance-holder {
+    width: 60%;
+    margin-left: 2rem;
+}
+
+.portfolio-allocation-holder div,
+.portfolio-performance-holder div {
+    background-color: #424242;
+    padding: 5px;
+}
+
+.portfolio-allocation-holder {
+    width: 30%;
+    margin-right: 5rem;
+}
+
