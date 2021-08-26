@@ -1,80 +1,58 @@
-import Ticker from "react-ticker";
 import "./ScrollingTicker.css";
+import Ticker from "react-ticker";
 import { useState, useEffect } from "react";
+import { getSymbols, getFeed } from "../service/ticker";
 
 export default function ScrollingTicker() {
-    const [symbols, setSymbols] = useState([]);
+    const [feed, setFeed] = useState([]);
 
     useEffect(() => {
-        console.log(process.env.REACT_APP_TICKER_API_KEY);
-        fetch(
-            "https://www.alphavantage.co/query?function=LISTING_STATUS&apikey=" +
-                process.env.REACT_APP_TICKER_API_KEY
-        )
-            .then((res) => res.text())
-            .then((data) => {
-                const items = data.split("\n");
-                const tickerSymbols = items
-                    .slice(1)
-                    .map((item) => item.split(",")[0]);
-                setSymbols(tickerSymbols);
-            });
+        asyncStartFeed();
+        setInterval(() => {
+            asyncStartFeed();
+        }, 1 * 60 * 1000);
     }, []);
 
-    const GetFeedData = () => {
-        const [feed, setFeed] = useState();
+    const asyncStartFeed = async () => {
+        const _symbols = await getSymbols();
+        let feeds = [];
+        for (let i = 0; i < 5; i++) {
+            const random = Math.floor(Math.random() * _symbols.length);
+            const _feed = await getFeed(_symbols[random]);
+            feeds.push(_feed);
+        }
+        console.log(feeds);
+        setFeed(feeds);
+    };
 
-        useEffect(() => {
-            let mount = true;
-            const getFeed = async () => {
-                await fetch(
-                    "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=IBM&apikey=" +
-                        process.env.REACT_APP_TICKER_API_KEY
-                )
-                    .then((res) => {
-                        res.text();
-                    })
-                    .then((data) => {
-                        const xmlDoc = new DOMParser().parseFromString(
-                            data,
-                            "text/xml"
-                        );
-                        const items = Array.from(
-                            xmlDoc.querySelectorAll("item")
-                        ).map((item) => ({
-                            title: item.querySelector("title").textContent,
-                            link: item.querySelector("link").textContent,
-                        }));
-                        if (mount) setFeed(items);
-                    });
-            };
-            getFeed();
-
-            return () => {
-                mount = false;
-            };
-        }, []);
-
-        return feed ? (
-            <p>
-                {feed.map((item) => (
-                    <a key={item.title} href={item.link || ""}>
-                        {item.title}
-                    </a>
-                ))}
-            </p>
-        ) : (
-            <p style={{ marginLeft: 20, marginRight: 20 }}>
-                <span style={{ color: "rgba(202, 43, 81, 1)" }}>
-                    Waiting For Ticker Feed...
-                </span>
+    const GetTickerFeed = () => {
+        return (
+            <p
+                style={{
+                    verticalAlign: "middle",
+                    whiteSpace: "nowrap",
+                    marginLeft: "3rem",
+                }}
+            >
+                {feed.map((item) =>
+                    item.note === "" ? (
+                        <span style={{ color: "#fff" }}>
+                            <b>{item.symbol}</b> OPEN: {item.open} CLOSE:{" "}
+                            {item.close} HIGH: {item.high} LOW: {item.low}
+                        </span>
+                    ) : (
+                        <span style={{ color: "rgba(202, 43, 81, 1)" }}>
+                            {item.note}
+                        </span>
+                    )
+                )}
             </p>
         );
     };
 
     return (
         <div className="ticker-wrapper">
-            <Ticker>{() => <GetFeedData />}</Ticker>
+            <Ticker>{() => <GetTickerFeed />}</Ticker>
         </div>
     );
 }

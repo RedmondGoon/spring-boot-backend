@@ -1,9 +1,22 @@
 import { Card } from "@material-ui/core";
 import { Line } from "react-chartjs-2";
 import { Doughnut } from "react-chartjs-2";
+import { useState, useEffect } from "react";
 import "./Portfolio.css";
+import { getPortfolioPerformanceChart } from "../service/portfolio";
 
 export default function Portfolio() {
+    const [portfolioPerformance, setPortfolioPerformance] = useState([]);
+
+    useEffect(() => {
+        asyncGetPortfolioPerformanceChart();
+    }, []);
+
+    const asyncGetPortfolioPerformanceChart = async () => {
+        const res = await getPortfolioPerformanceChart();
+        setPortfolioPerformance(res);
+    };
+
     const data = {
         labels: ["Stocks", "Cash"],
         datasets: [
@@ -35,11 +48,10 @@ export default function Portfolio() {
     };
 
     const performanceData = {
-        labels: ["1", "2", "3", "4", "5", "6"],
         datasets: [
             {
                 label: "",
-                data: [12, 19, 3, 5, 2, 3],
+                data: portfolioPerformance,
                 fill: true,
                 backgroundColor: "rgba(202, 43, 81, 1)",
                 borderColor: "rgba(202, 43, 81, 1)",
