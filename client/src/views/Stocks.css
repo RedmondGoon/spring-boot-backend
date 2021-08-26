@@ -1,0 +1,12 @@
+.stock-holder {
+    text-align: left;
+    width: 150%;
+    height: 100%;
+    margin-right: 2rem;
+}
+
+.stock-chart div,
+.stock-holder div {
+    background-color: #424242;
+    color: white;
+}
