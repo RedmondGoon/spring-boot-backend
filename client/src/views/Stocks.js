@@ -8,17 +8,16 @@ import {
     makeStyles,
     Grid,
     Button,
-    TextField
+    TextField,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle
 } from '@material-ui/core';
-import {
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer
-} from 'recharts';
+import StockCards from '../ui/StockCards';
+import StockChart from '../ui/StockChart';
+import {getData, getHistData, buyStock, sellStock} from '../service/stocks';
 
 const useStyles = makeStyles({
     root: {
@@ -31,39 +30,28 @@ const useStyles = makeStyles({
 
 
 export default function Stocks() {
-
-    const histData = [
-        {
-            date: 'Apr',
-            price: '100'
-
-        },
-        {
-            date: 'Mar',
-            price: '120'
-
-        },
-        {
-            date: 'Jun',
-            price: '130'
-
-        },
-        {
-            date: 'Jul',
-            price: '120'
-
-        },
-    ];
     
-    const [price, setPrice] = useState();
+    const [data, setData] = useState();
+    const [histData, setHistData] = useState();
     const stock = useRef('');
 
-    const getData = () => {
-        console.log(stock.current.value)
-        setPrice(150)
-    };
- 
+    const [openBuy, setOpenBuy] = useState(false);
+    const [openSell, setOpenSell] = useState(false);
+    const qty = useRef(0);
+    
 
+    const handleBuyOpen = () => {
+        setOpenBuy(true);
+    };
+    const handleBuyClose = () => {
+        setOpenBuy(false);
+    };
+    const handleSellOpen = () => {
+        setOpenSell(true);
+    };
+    const handleSellClose = () => {
+        setOpenSell(false);
+    };
 
     return (
         <Container>
@@ -79,7 +67,11 @@ export default function Stocks() {
             variant="contained"
             color="primary"
             size="small"
-            onClick={getData}
+            onClick={() => {
+                setData(getData(stock.current.value));
+                setHistData(getHistData(stock.current.value));
+            }
+            }
             >
                 Get Data
             </Button>
@@ -91,174 +83,113 @@ export default function Stocks() {
                                 Current Stock Price
                             </Typography>
                             <Box height={40} width={40} alignItems="center" justifyContent="center">
-                                <Typography align="center" variant="body3" gutterBottom>
-                                    {price}
-                                </Typography>
+                                {data == undefined ? (
+                                    <Typography>
+                                        {""}
+                                    </Typography>                                                                       
+                                ) : (
+                                    <Typography>
+                                       {data.current}
+                                    </Typography>   
+                                )}
                             </Box>
                         </CardContent>
                     </Card>
-                    <ResponsiveContainer  width={300} height={150}>
-                        <div>
-                            <LineChart
-                                width={350}
-                                height={200}
-                                data={histData}
-                                margin={{
-                                    top: 1,
-                                    right: 3,
-                                    left: 2,
-                                    bottom: 10
-                                }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis
-                                    dataKey="date"
-                                    label="Date"
-                                />
-                                <YAxis
-                                    dataKey="price"
-                                    label="Price"
-                                />
-                                <Tooltip />
-                                <Line
-                                    type="monotone"
-                                    dataKey="price"
-                                    stroke="#8884d8"
-                                    activeDot={{ r: 8 }}
-                                />
-                            </LineChart>
-                        </div>
-                    </ResponsiveContainer>
+                    <div className="portfolio-chart">
+                        {histData == undefined ? (
+                            <StockChart data=""/>                                                                    
+                        ) : (
+                            <StockChart data={histData}/>  
+                        )}
+                    </div>
                     <Box height={20} width={40} alignItems="center" justifyContent="center" />
                     <Box height={20} width={40} alignItems="center" justifyContent="center" />
                     <Box height={20} width={40} alignItems="center" justifyContent="center" />
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        size="small"
-                    >
+                    <Button variant="contained" color="primary" size="small" onClick={() => handleBuyOpen()}>
                         BUY
-                    </Button> 
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        size="small"
-                    >
+                    </Button>
+                    <Dialog open={openBuy} onClose={() => handleBuyClose()} aria-labelledby="form-dialog-title">
+                        <DialogTitle id="form-dialog-title">Buy Stock</DialogTitle>
+                        <DialogContent>
+                        <DialogContentText>
+                            Input the quantity of stock you wish to buy.
+                        </DialogContentText>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="qty"
+                            label="Stock Quantity"
+                            fullWidth
+                            inputRef={qty}
+                        />
+                        </DialogContent>
+                        <DialogActions>
+                        <Button onClick={() => handleBuyClose()} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={() => {                       
+                            const res = buyStock(1, stock.current.value, qty.current.value, 1000);
+                            handleBuyClose();
+                            alert(res);
+                        }} 
+                        color="primary">
+                            BUY
+                        </Button>
+                        </DialogActions>
+                    </Dialog> 
+                    <Button variant="contained" color="primary" size="small" onClick={() => handleSellOpen()}>
                         SELL
-                    </Button>                    
+                    </Button>  
+                    <Dialog open={openSell} onClose={() => handleSellClose()} aria-labelledby="form-dialog-title">
+                        <DialogTitle id="form-dialog-title">Sell Stock</DialogTitle>
+                        <DialogContent>
+                        <DialogContentText>
+                            Input the quantity of stock you wish to sell.
+                        </DialogContentText>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="qty"
+                            label="Stock Quantity"
+                            fullWidth
+                            inputRef={qty}
+                        />
+                        </DialogContent>
+                        <DialogActions>
+                        <Button onClick={() => handleSellClose()} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={() => {                       
+                            const res = sellStock(1, stock.current.value, qty.current.value, 1000);
+                            handleSellClose();
+                            alert(res);
+                        }} 
+                        color="primary">
+                            SELL
+                        </Button>
+                        </DialogActions>
+                    </Dialog>                   
                 </Grid>
+                <Box height={20} width={290} alignItems="center" justifyContent="center" />
                 <Grid>
-                    <Card variant="outlined" >
-                        <CardContent align="left">
-                            <Typography align="left" color="#eabf13" variant="h6">
-                                Today
-                            </Typography>
-                            <Box display="flex" flexDirection="row" bgcolor="background.paper">
-                                <Card style={{ border: 'none', boxShadow: 'none' }}>
-                                    <CardContent align="left">
-                                        <Typography align="left" color="#eabf13" variant="body2">
-                                            High
-                                        </Typography>
-                                        <Box height={20} width={20} alignItems="left" justifyContent="left">
-                                            <Typography align="left" variant="body2" gutterBottom>
-                                                {price}
-                                            </Typography>
-                                        </Box>
-                                        <Box height={20} width={40} alignItems="center" justifyContent="center" />
-                                        <Typography align="left" color="#eabf13" variant="body2">
-                                            Low
-                                        </Typography>
-                                        <Box height={20} width={20} alignItems="left" justifyContent="left">
-                                            <Typography align="left" variant="body2" gutterBottom>
-                                                {price}
-                                            </Typography>
-                                        </Box>
-                                    </CardContent>
-                                </Card>
-                                <Card style={{ border: 'none', boxShadow: 'none' }}>
-                                    <CardContent align="left">
-                                        <Typography align="left" color="#eabf13" variant="body2">
-                                            Open
-                                        </Typography>
-                                        <Box height={20} width={20} alignItems="left" justifyContent="left">
-                                            <Typography align="left" variant="body2" gutterBottom>
-                                                {price}
-                                            </Typography>
-                                        </Box>
-                                        <Box height={20} width={40} alignItems="center" justifyContent="center" />
-                                        <Typography align="left" color="#eabf13" variant="body2">
-                                            Close
-                                        </Typography>
-                                        <Box height={20} width={20} alignItems="left" justifyContent="left">
-                                            <Typography align="left" variant="body2" gutterBottom>
-                                                {price}
-                                            </Typography>
-                                        </Box>
-                                    </CardContent>
-                                </Card>
-                            </Box>
-                        </CardContent>
-                    </Card>
-                    <Card variant="outlined" >
-                        <CardContent align="left">
-                            <Typography align="left" color="#eabf13" variant="h6">
-                                52 Week
-                            </Typography>
-                            <Box display="flex" flexDirection="row" bgcolor="background.paper">
-                                <Card style={{ border: 'none', boxShadow: 'none' }}>
-                                    <CardContent align="left">
-                                        <Typography align="left" color="#eabf13" variant="body2">
-                                            High
-                                        </Typography>
-                                        <Box height={20} width={20} alignItems="left" justifyContent="left">
-                                            <Typography align="left" variant="body2" gutterBottom>
-                                                {price}
-                                            </Typography>
-                                        </Box>
-                                        <Box height={20} width={40} alignItems="center" justifyContent="center" />
-                                        <Typography align="left" color="#eabf13" variant="body2">
-                                            Low
-                                        </Typography>
-                                        <Box height={20} width={20} alignItems="left" justifyContent="left">
-                                            <Typography align="left" variant="body2" gutterBottom>
-                                                {price}
-                                            </Typography>
-                                        </Box>
-                                    </CardContent>
-                                </Card>
-                            </Box>
-                        </CardContent>
-                    </Card>
-                    <Card variant="outlined" >
-                        <CardContent align="left">
-                            <Typography align="left" color="#eabf13" variant="h6">
-                                Volume
-                            </Typography>
-                            <Box display="flex" flexDirection="row" bgcolor="background.paper">
-                                <Card style={{ border: 'none', boxShadow: 'none' }}>
-                                    <CardContent align="left">
-                                        <Typography align="left" color="#eabf13" variant="body2">
-                                            Today
-                                        </Typography>
-                                        <Box height={20} width={20} alignItems="left" justifyContent="left">
-                                            <Typography align="left" variant="body2" gutterBottom>
-                                                {price}
-                                            </Typography>
-                                        </Box>
-                                        <Box height={20} width={40} alignItems="center" justifyContent="center" />
-                                        <Typography align="left" color="#eabf13" variant="body2">
-                                            Average
-                                        </Typography>
-                                        <Box height={20} width={20} alignItems="left" justifyContent="left">
-                                            <Typography align="left" variant="body2" gutterBottom>
-                                                {price}
-                                            </Typography>
-                                        </Box>
-                                    </CardContent>
-                                </Card>
-                            </Box>
-                        </CardContent>
-                    </Card>
+                {data == undefined ? (
+                    <Container>
+                        <StockCards title="Previous Day" key1="High" value1="" key2="Low" value2="" key3="Open" value3="" key4="Close" value4=""/>
+                        <Box height={20} width={40} alignItems="center" justifyContent="center" />
+                        <StockCards title="52 Week" key1="High" value1="" key2="Low" value2=""/>
+                        <Box height={20} width={40} alignItems="center" justifyContent="center" />
+                        <StockCards title="Volume" key1="Today" value1="" key2="Avg" value2=""/> 
+                    </Container>                                                                 
+                ) : (
+                    <Container>
+                        <StockCards title="Previous Day" key1="High" value1={data.previousday[0].high} key2="Low" value2={data.previousday[0].low} key3="Open" value3={data.previousday[0].open} key4="Close" value4={data.previousday[0].close} />
+                        <Box height={20} width={40} alignItems="center" justifyContent="center" />
+                        <StockCards title="52 Week" key1="High" value1={data.week52[0].high} key2="Low" value2={data.week52[0].low}/>
+                        <Box height={20} width={40} alignItems="center" justifyContent="center" />
+                        <StockCards title="Volume" key1="Today" value1={data.volume[0].today} key2="Avg" value2={data.volume[0].avg}/> 
+                    </Container>
+                )}
+                    
                 </Grid>
             </Box>
         </Container>
