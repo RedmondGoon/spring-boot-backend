@@ -16,12 +16,11 @@ export default function ScrollingTicker() {
     const asyncStartFeed = async () => {
         const _symbols = await getSymbols();
         let feeds = [];
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 4; i++) {
             const random = Math.floor(Math.random() * _symbols.length);
             const _feed = await getFeed(_symbols[random]);
             feeds.push(_feed);
         }
-        console.log(feeds);
         setFeed(feeds);
     };
 
@@ -36,7 +35,7 @@ export default function ScrollingTicker() {
             >
                 {feed.map((item) =>
                     item.note === "" ? (
-                        <span style={{ color: "#fff" }}>
+                        <span key={item.symbol} style={{ color: "#fff" }}>
                             <b>{item.symbol}</b> OPEN: {item.open} CLOSE:{" "}
                             {item.close} HIGH: {item.high} LOW: {item.low}
                         </span>
