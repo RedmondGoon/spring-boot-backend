@@ -13,11 +13,15 @@ import {
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle
+    DialogTitle,
+    Radio,
+    RadioGroup,
+    FormControlLabel,
+    FormControl,
 } from '@material-ui/core';
 import StockCards from '../ui/StockCards';
 import StockChart from '../ui/StockChart';
-import {getData, getHistData, buyStock, sellStock} from '../service/stocks';
+import {getData, getHistData, buyStock, sellStock, getCurrentPrice} from '../service/stocks';
 
 const useStyles = makeStyles({
     root: {
@@ -33,11 +37,17 @@ export default function Stocks() {
     
     const [data, setData] = useState();
     const [histData, setHistData] = useState();
+    const [range, setRange] = useState();
     const stock = useRef('');
 
     const [openBuy, setOpenBuy] = useState(false);
     const [openSell, setOpenSell] = useState(false);
     const qty = useRef(0);
+
+    const handleRadioChange = (event) => {
+        console.log(event.target.value);
+        setRange(event.target.value);
+    }
     
 
     const handleBuyOpen = () => {
@@ -63,13 +73,21 @@ export default function Stocks() {
             placeholder="Stock Name"
             inputRef={stock}            
             />
+                <FormControl component="fieldset">
+                    <RadioGroup aria-label="quiz" name="quiz" onChange={handleRadioChange}>
+                        <FormControlLabel value="daily" control={<Radio />} label="Daily" />
+                        <FormControlLabel value="weekly" control={<Radio />} label="Weekly" />
+                        <FormControlLabel value="monthly" control={<Radio />} label="Monthly" />
+                    </RadioGroup>
+                </FormControl>
             <Button
             variant="contained"
             color="primary"
             size="small"
             onClick={() => {
                 setData(getData(stock.current.value));
-                setHistData(getHistData(stock.current.value));
+                setHistData(getHistData(stock.current.value, range));
+                // getCurrentPrice(stock.current.value);
             }
             }
             >

@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export function getData(stock) {
     console.log(stock)
     const data = {
@@ -16,7 +18,21 @@ export function getData(stock) {
     return data;
 }
 
-export function getHistData(stock) {
+export async function getCurrentPrice(stock) {
+    axios.post(`https://65yrtzxkv2.execute-api.ap-southeast-1.amazonaws.com/SinglePrice`, {
+        params: {
+            "symbol":"IBM",
+            "types":"price"
+        }
+    }).then((response) => {
+        console.log(response.data);
+    }).catch((error) => {
+        console.log(error)
+    });
+}
+
+export function getHistData(stock, range) {
+    console.log(stock, range);
     const obj = {
         "Mar":"150",
         "Apr":"145",
