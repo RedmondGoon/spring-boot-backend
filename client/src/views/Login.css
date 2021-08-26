@@ -1,0 +1,18 @@
+.overall-container {
+    border-radius: 10px;
+    padding: 50px 100px;
+    text-align: center;
+    background-color: white;
+}
+
+.input-field {
+    padding: 10px;
+}
+
+.input-field > .MuiFormControl-root {
+    width: 300px;
+}
+
+.overall-container button {
+    margin-top: 40px;
+}

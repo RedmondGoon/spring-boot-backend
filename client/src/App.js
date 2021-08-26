@@ -5,19 +5,25 @@ import Home from "./views/Home";
 import Portfolio from "./views/Portfolio";
 import Stocks from "./views/Stocks";
 import Trade from "./views/Trade";
+import Login from "./views/Login";
+import ScrollingTicker from "./ui/ScrollingTicker";
 
 function App() {
     return (
         <div className="App">
             <BrowserRouter>
-                <Navbar />
                 <Switch>
-                    <Route exact path="/" component={Home} />
-                    <Route path="/portfolio" component={Portfolio} />
-                    <Route path="/stocks" component={Stocks} />
-                    <Route path="/trades" component={Trade} />
+                    <Route exact path="/" component={Login} />
+                    <div>
+                        <Navbar />
+                        <Route path="/home" component={Home} />
+                        <Route path="/portfolio" component={Portfolio} />
+                        <Route path="/stocks" component={Stocks} />
+                        <Route path="/trades" component={Trade} />
+                    </div>
                 </Switch>
             </BrowserRouter>
+            <ScrollingTicker />
         </div>
     );
 }
