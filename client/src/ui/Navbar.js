@@ -13,7 +13,7 @@ export default function Navbar() {
         setValue(newValue);
         switch (newValue) {
             case "home":
-                history.push("/");
+                history.push("/home");
                 break;
             case "portfolio":
                 history.push("/portfolio");
