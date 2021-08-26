@@ -6,26 +6,64 @@ import {
     Paper,
     Divider,
     Button,
+    Dialog,
+    DialogContent,
+    DialogActions,
+    DialogTitle,
+    Slider,
+    TextField,
 } from "@material-ui/core";
 import "./Home.css";
 import PortfolioChart from "../ui/PortfolioChart";
 import { deposit, withdraw } from "../service/portfolio";
+import { getUserProfile } from "../service/home";
+import { useState, useEffect } from "react";
 
 export default function Home() {
-    const depositForClient = async (clientID, amount) => {
+    const [depositOpen, setDepositOpen] = useState(false);
+    const [withdrawOpen, setWithdrawOpen] = useState(false);
+    const [depositAmount, setDepositAmount] = useState(0);
+    const [withdrawAmount, setWithdrawAmount] = useState(0);
+    const [accountInfo, setAccountInfo] = useState();
+
+    useEffect(() => {
+        asyncGetUserProfile();
+    }, []);
+
+    const asyncGetUserProfile = async () => {
+        let account = await getUserProfile();
+        setAccountInfo(account);
+    };
+
+    const depositForClient = async () => {
         try {
-            await deposit(clientID, amount);
+            await deposit(localStorage.getItem("id"), depositAmount);
+            asyncGetUserProfile();
         } catch (err) {
             console.log(err);
         }
     };
 
-    const withdrawForClient = async (clientID, amount) => {
+    const withdrawForClient = async () => {
         try {
-            await withdraw(clientID, amount);
+            await withdraw(localStorage.getItem("id"), withdrawAmount);
+            asyncGetUserProfile();
         } catch (err) {
             console.log(err);
         }
+    };
+
+    const onDepositChange = (e) => {
+        let value = e.target.value;
+        if (!isNaN(value) && !isNaN(parseFloat(value))) {
+            setDepositAmount(e.target.value);
+        } else {
+            console.log("must be number!");
+        }
+    };
+
+    const onWithdrawChange = (_, value) => {
+        setWithdrawAmount(value);
     };
 
     return (
@@ -42,25 +80,20 @@ export default function Home() {
                                 Account
                             </Typography>
                             <Typography variant="subtitle1" gutterBottom>
-                                S$1000
+                                {accountInfo
+                                    ? `S$${accountInfo.account}`
+                                    : "S$0"}
                             </Typography>
                             <Divider />
-                            <br />
-                            <div className="info">
-                                <Typography variant="h6" gutterBottom>
-                                    Settled Cash
-                                </Typography>
-                                <Typography variant="h6" gutterBottom>
-                                    S$200
-                                </Typography>
-                            </div>
                             <Divider />
                             <div className="info">
                                 <Typography variant="h6" gutterBottom>
                                     Buying Power
                                 </Typography>
                                 <Typography variant="h6" gutterBottom>
-                                    S$300
+                                    {accountInfo
+                                        ? `S$${accountInfo.buyingPower}`
+                                        : "S$0"}
                                 </Typography>
                             </div>
                             <Divider />
@@ -70,7 +103,7 @@ export default function Home() {
                                 variant="contained"
                                 color="secondary"
                                 onClick={() => {
-                                    depositForClient("clientID", 0);
+                                    setDepositOpen(true);
                                 }}
                             >
                                 Deposit
@@ -79,7 +112,7 @@ export default function Home() {
                                 variant="contained"
                                 color="secondary"
                                 onClick={() => {
-                                    withdrawForClient("clientID", 0);
+                                    setWithdrawOpen(true);
                                 }}
                             >
                                 Withdraw
@@ -90,6 +123,74 @@ export default function Home() {
             </div>
             <div className="portfolio-chart">
                 <PortfolioChart />
+            </div>
+            <div>
+                <Dialog
+                    fullWidth
+                    maxWidth="md"
+                    open={depositOpen}
+                    onClose={() => {
+                        setDepositOpen(false);
+                    }}
+                >
+                    <DialogTitle>Deposit</DialogTitle>
+                    <DialogContent>
+                        <TextField
+                            variant="outlined"
+                            color="secondary"
+                            fullWidth
+                            autoFocus
+                            placeholder="Input deposit amount"
+                            onChange={onDepositChange}
+                            type="number"
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            color="secondary"
+                            variant="contained"
+                            onClick={depositForClient}
+                        >
+                            Confirm Deposit
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog
+                    fullWidth
+                    maxWidth="md"
+                    open={withdrawOpen}
+                    onClose={() => {
+                        setWithdrawOpen(false);
+                    }}
+                >
+                    <DialogTitle>Withdraw</DialogTitle>
+                    <DialogContent>
+                        <Slider
+                            style={{ marginTop: 30 }}
+                            color="secondary"
+                            min={0}
+                            max={
+                                accountInfo
+                                    ? Number(accountInfo.buyingPower)
+                                    : 100
+                            }
+                            defaultValue={0.1}
+                            step={1}
+                            value={withdrawAmount}
+                            valueLabelDisplay="auto"
+                            onChangeCommitted={onWithdrawChange}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            color="secondary"
+                            variant="contained"
+                            onClick={withdrawForClient}
+                        >
+                            Confirm Withdraw
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         </div>
     );
