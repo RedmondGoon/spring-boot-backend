@@ -3,10 +3,14 @@ import { Line } from "react-chartjs-2";
 import { Doughnut } from "react-chartjs-2";
 import { useState, useEffect } from "react";
 import "./Portfolio.css";
-import { getPortfolioPerformanceChart } from "../service/portfolio";
+import {
+    getCompositionProfile,
+    getPortfolioPerformanceChart,
+} from "../service/portfolio";
 
 export default function Portfolio() {
     const [portfolioPerformance, setPortfolioPerformance] = useState([]);
+    const [compositionProfile, setCompositionProfile] = useState([]);
 
     useEffect(() => {
         asyncGetPortfolioPerformanceChart();
@@ -17,11 +21,19 @@ export default function Portfolio() {
         setPortfolioPerformance(res);
     };
 
+    useEffect(() => {
+        asyncGetCompositionProfile();
+    }, []);
+
+    const asyncGetCompositionProfile = async () => {
+        const res = await getCompositionProfile();
+        setCompositionProfile(res);
+    };
     const data = {
-        labels: ["Stocks", "Cash"],
+        labels: Object.keys(compositionProfile),
         datasets: [
             {
-                data: [10000, 20000],
+                data: Object.values(compositionProfile),
                 backgroundColor: [
                     "rgba(255, 99, 132, 0.2)",
                     "rgba(54, 162, 235, 0.2)",

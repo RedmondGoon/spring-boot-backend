@@ -16,8 +16,16 @@ export async function getAccountChart() {
 export async function getPortfolioPerformanceChart() {
     try {
         const result = await axios.get("data/portfolioPerformance.json");
-        console.log(result);
         return result.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+export async function getCompositionProfile() {
+    try {
+        const res = await axios.get("data/donutChart.json");
+        return res.data;
     } catch (err) {
         return err;
     }
