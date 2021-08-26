@@ -26,9 +26,12 @@ ____
 This API is used to create a new account, The API will return "save" account if successful. The request body should look as follows:
 <code>
 {
-	"password": "123",
-	"firstName": "Redmond",
-    "lastName": "Goon",
-	"email": "redmond_g@hotmail.com"
+    
+        "password": "123", 
+        "firstName": "Redmond",
+        "lastName": "Goon",
+        "email": "redmond_g@hotmail.com"
+   
+
 }
 </code>
