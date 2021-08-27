@@ -63,7 +63,7 @@ export default function PortfolioChart() {
         <div>
             <Paper elevation={3}>
                 <Card style={{ padding: "1rem" }}>
-                    <Typography variant="h5">Account</Typography>
+                    <Typography variant="h5">Accounts</Typography>
                     <Line data={data} options={options} />
                 </Card>
             </Paper>

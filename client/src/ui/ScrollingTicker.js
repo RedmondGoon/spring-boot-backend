@@ -35,12 +35,20 @@ export default function ScrollingTicker() {
             >
                 {feed.map((item) =>
                     item.note === "" ? (
-                        <span key={item.symbol} style={{ color: "#fff" }}>
+                        <span
+                            key={item.symbol}
+                            style={{ color: "#fff", fontSize: "large" }}
+                        >
                             <b>{item.symbol}</b> OPEN: {item.open} CLOSE:{" "}
                             {item.close} HIGH: {item.high} LOW: {item.low}
                         </span>
                     ) : (
-                        <span style={{ color: "rgba(202, 43, 81, 1)" }}>
+                        <span
+                            style={{
+                                color: "rgba(202, 43, 81, 1)",
+                                fontSize: "large",
+                            }}
+                        >
                             {item.note}
                         </span>
                     )
