@@ -11,7 +11,8 @@
 }
 
 .portfolio-chart div,
-.portfolio-holder div {
+.portfolio-holder div,
+.MuiDialog-container div {
     background-color: #424242;
     color: white;
 }

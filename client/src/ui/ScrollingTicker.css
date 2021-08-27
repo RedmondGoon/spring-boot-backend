@@ -1,5 +1,5 @@
 .ticker-wrapper {
-    position: absolute;
+    position: fixed;
     z-index: 5;
     bottom: 0;
     left: 0;
@@ -8,4 +8,8 @@
     font-size: 0.7rem;
     background-color: #303030;
     color: white;
+}
+
+.ticker-wrapper span {
+    margin-left: 3rem;
 }
