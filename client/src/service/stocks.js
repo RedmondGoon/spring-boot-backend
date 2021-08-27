@@ -1,30 +1,28 @@
-import axios from 'axios';
+import axios from "axios";
 
 export async function getData(stock) {
-    console.log(stock)
+    console.log(stock);
     const data = {
-    "current": "130",
-    "previousday":[
-        {"high":"150", "low":"120", "open":"130", "close":"130"},
-    ],
-    "week52":[
-        {"high":"150", "low":"120"},
-    ],
-    "volume":[
-        {"today":"1200", "avg":"1300"}
-    ],
-    }
+        current: "130",
+        previousday: [{ high: "150", low: "120", open: "130", close: "130" }],
+        week52: [{ high: "150", low: "120" }],
+        volume: [{ today: "1200", avg: "1300" }],
+    };
     console.log(data);
     return data;
 }
 
 export async function getCurrentPrice(stock) {
     let res;
-    await axios.get(`https://65yrtzxkv2.execute-api.ap-southeast-1.amazonaws.com/SinglePrice?symbol=${stock}`)
+    await axios
+        .get(
+            `https://65yrtzxkv2.execute-api.ap-southeast-1.amazonaws.com/SinglePrice?symbol=${stock}`
+        )
         .then((response) => {
             res = response.data.price;
-        }).catch((error) => {
-            console.log(error)
+        })
+        .catch((error) => {
+            console.log(error);
         });
     return res;
 }
@@ -54,33 +52,44 @@ export async function getHistData(stock, range) {
     //     "Sept2":"150",
     //     "Oct2":"152",
     // }
-    if (range == 'daily') {    
-        await axios.get(`https://mn7q8pqe6b.execute-api.ap-southeast-1.amazonaws.com/Prod?symbol=${stock}`)
-        .then((response) => {
-            console.log(response.data);
-            res = response.data;
-        }).catch((error) => {
-            console.log(error)
-        });
-
-    } else if (range == 'weekly') {
-        await axios.get(`https://mn7q8pqe6b.execute-api.ap-southeast-1.amazonaws.com/Prod?symbol=${stock}`)
-        .then((response) => {
-            console.log(response.data);
-            res = response.data;
-        }).catch((error) => {
-            console.log(error)
-        });
+    if (range === "daily") {
+        await axios
+            .get(
+                `https://mn7q8pqe6b.execute-api.ap-southeast-1.amazonaws.com/Prod?symbol=${stock}`
+            )
+            .then((response) => {
+                console.log(response.data);
+                res = response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    } else if (range === "weekly") {
+        await axios
+            .get(
+                `https://mn7q8pqe6b.execute-api.ap-southeast-1.amazonaws.com/Prod?symbol=${stock}`
+            )
+            .then((response) => {
+                console.log(response.data);
+                res = response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     } else {
-        await axios.get(`https://yrvmm9pj4l.execute-api.ap-southeast-1.amazonaws.com/Prod?symbol=${stock}`)
-        .then((response) => {
-            console.log(response.data);
-            res = response.data;
-        }).catch((error) => {
-            console.log(error)
-        });
+        await axios
+            .get(
+                `https://yrvmm9pj4l.execute-api.ap-southeast-1.amazonaws.com/Prod?symbol=${stock}`
+            )
+            .then((response) => {
+                console.log(response.data);
+                res = response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
-    
+
     const data = {
         labels: Object.keys(res),
         datasets: [

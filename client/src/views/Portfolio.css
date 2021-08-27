@@ -1,7 +1,9 @@
 .portfolio {
     display: flex;
     justify-content: space-between;
-    padding: 2rem;
+    padding-top: 5rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
 }
 
 .portfolio-performance-holder {
