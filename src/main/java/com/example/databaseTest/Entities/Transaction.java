@@ -53,6 +53,10 @@ public class Transaction {
 //        return account;
 //    }
 
+    public void setExecPrice(double execPrice) {
+        this.execPrice = execPrice;
+    }
+
     public String getTicker() {
         return ticker;
     }

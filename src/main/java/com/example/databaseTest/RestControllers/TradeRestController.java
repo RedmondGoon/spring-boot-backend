@@ -2,6 +2,7 @@ package com.example.databaseTest.RestControllers;
 
 import com.example.databaseTest.Entities.Portfolio;
 import com.example.databaseTest.Entities.Transaction;
+import com.example.databaseTest.ExternalAPI.AlphaVantage;
 import com.example.databaseTest.Services.PortfolioService;
 import com.example.databaseTest.Services.TransactionService;
 import com.example.databaseTest.Entities.TransactionActionType;
@@ -49,14 +50,26 @@ public class TradeRestController {
         return ResponseEntity.badRequest().build();
     }
 
-    @GetMapping(value = "/holdings")
+    @GetMapping(value = "/holdings/stocks")
     @ResponseBody
-    public ResponseEntity<Map<String, Integer>> getHoldingsByAccId(@RequestParam int accId){
+    public ResponseEntity<Map<String, Integer>> getStockHoldingsByAccId(@RequestParam int accId) {
         Map<String, Integer> holdings = portService.getStockHoldingsByAccId(accId);
         if (holdings == null)
             return ResponseEntity.notFound().build();
         else
             return ResponseEntity.ok().body(holdings);
+    }
+
+    @GetMapping(value = "/holdings/{type}")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> getTotalHoldingsByAccId(@PathVariable("type") String type, @RequestParam int accId){
+        return ResponseEntity.ok().body(portService.getPortfolioValueByAccId(accId, type));
+    }
+
+    @GetMapping(value = "/chart")
+    @ResponseBody
+    public ResponseEntity<List<Map<String, String>>> getChart(int accId){
+        return ResponseEntity.ok().body(portService.getChartByAccId(accId));
     }
 
 
@@ -86,11 +99,11 @@ public class TradeRestController {
     @PutMapping(value = "/portfolio/cash/{idType}")
     public ResponseEntity<String> updateCashHoldings(@PathVariable("idType") String idType ,@RequestParam int id, double cash ){
         if(idType.equals("id")) {
-            portService.updatedCashHoldingsById(id, cash);
+            portService.updateCashHoldingsById(id, cash);
             return new ResponseEntity<String>("Update by ID Successful", HttpStatus.OK);
         }
         else if(idType.equals("accId")){
-            portService.updatedCashHoldingsByAccId(id, cash);
+            portService.updateCashHoldingsByAccId(id, cash);
             return new ResponseEntity<String>("Update by accID Successful", HttpStatus.OK);
         }
         return new ResponseEntity<String>("Invalid Id Type", HttpStatus.BAD_REQUEST);
@@ -99,11 +112,11 @@ public class TradeRestController {
     @PutMapping(value = "/portfolio/stock/{idType}")
     public ResponseEntity<String> updateStockHoldings(@PathVariable("idType") String idType ,@RequestParam int id, String ticker, int quantity){
         if(idType.equals("id")) {
-            portService.updatedStockHoldingsById(id, ticker, quantity);
+            portService.updateStockHoldingsById(id, ticker, quantity);
             return new ResponseEntity<String>("Update by ID Successful", HttpStatus.OK);
         }
         else if(idType.equals("accId")){
-            portService.updatedStockHoldingsByAccId(id, ticker, quantity);
+            portService.updateStockHoldingsByAccId(id, ticker, quantity);
             return new ResponseEntity<String>("Update by accID Successful", HttpStatus.OK);
         }
         return new ResponseEntity<String>("Invalid Id Type", HttpStatus.BAD_REQUEST);
@@ -122,38 +135,27 @@ public class TradeRestController {
     @PostMapping(value = "/transaction", consumes = {"application/json", "application/xml"})
     public ResponseEntity<String> addTransaction(@RequestBody Transaction transaction){
         TransactionActionType actionType = transaction.getActionType();
+        transaction.setExecPrice(AlphaVantage.getQuotes(transaction.getTicker()));
 
         if(actionType.toString().equals("BUY")){
-//            return new ResponseEntity<String>("Actiontype is buy.", HttpStatus.OK);
             double cashHolding = portService.getCashHoldingsByAccId(transaction.getAccId());
-            System.out.println(transaction.getExecPrice()*transaction.getQuantity());
-            System.out.println(cashHolding);
             if(transaction.getExecPrice()*transaction.getQuantity() > cashHolding){
                 return new ResponseEntity<String>("Insufficient Cash in account", HttpStatus.BAD_REQUEST);
             }
             else{
-//                transaction.setStatus("PENDING");
                 tranService.addNewTrx(transaction);
-//                portService.updatePortfolioHoldingsByAccId(transaction.getAccId(), transaction.getTicker(), transaction.getQuantity(), transaction.getExecPrice()*-1*transaction.getQuantity());
                 return new ResponseEntity<String>("Buy order is successfully placed.", HttpStatus.OK);
-
             }
-
         }
         else if(actionType.toString().equals("SELL")){
-//            return new ResponseEntity<String>("Actiontype is sell.", HttpStatus.OK);
 
-            // Add exception if stock or holdings object does not exist yet
             try {
                 Map<String, Integer> stockHoldings = portService.getStockHoldingsByAccId(transaction.getAccId());
                 if(stockHoldings.containsKey(transaction.getTicker())) {
                     if (transaction.getQuantity() > stockHoldings.get(transaction.getTicker())) {
                         return new ResponseEntity<String>("Insufficient stocks in account", HttpStatus.BAD_REQUEST);
                     } else {
-//                        transaction.setStatus("PENDING");
                         tranService.addNewTrx(transaction);
-//                        portService.updatePortfolioHoldingsByAccId(transaction.getAccId(), transaction.getTicker(), transaction.getQuantity()*-1, transaction.getExecPrice()*transaction.getQuantity());
-
                         return new ResponseEntity<String>("Sell order is successfully placed.", HttpStatus.OK);
                     }
                 }
@@ -162,14 +164,10 @@ public class TradeRestController {
                 }
             }
             catch (Exception e){
-
                 return new ResponseEntity<String>("Holdings does not exist yet.", HttpStatus.BAD_REQUEST);
             }
-
         }
         return new ResponseEntity<String>("Invalid action type.", HttpStatus.BAD_REQUEST);
-
-
     }
     @GetMapping(value = "/transaction")
     @ResponseBody
@@ -204,6 +202,7 @@ public class TradeRestController {
         return new ResponseEntity<String>("DELETE by ID Successful", HttpStatus.OK);
 
     }
+
 
 
 }

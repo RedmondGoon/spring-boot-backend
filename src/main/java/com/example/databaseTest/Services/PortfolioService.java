@@ -2,6 +2,7 @@ package com.example.databaseTest.Services;
 
 import com.example.databaseTest.Entities.Portfolio;
 
+import java.util.List;
 import java.util.Map;
 
 public interface PortfolioService {
@@ -14,14 +15,16 @@ public interface PortfolioService {
 //    void addNewPortfolioByAccId(int accId);
 //    Map<String, Integer> getStockHoldingsById(int id);
     double getCashHoldingsById(int id);
-    double getPortfolioValueById(int id);
+    Map<String, String> getPortfolioValueByAccId(int accId, String type);
+    List<Map<String, String>> getChartByAccId(int accId);
+
     void updatePortfolioHoldingsById(int id, String ticker, int quantity, double cash);
     void updatePortfolioHoldingsByAccId(int accId, String ticker, int quantity, double cash);
 //    void updatePortfolioHoldings(PortfolioDTO portfolioDto);
-    void updatedCashHoldingsById(int id, double cash);
-    void updatedCashHoldingsByAccId(int accId, double cash);
-    void updatedStockHoldingsById(int id, String ticker, int quantity);
-    void updatedStockHoldingsByAccId(int accId, String ticker, int quantity);
+    void updateCashHoldingsById(int id, double cash);
+    void updateCashHoldingsByAccId(int accId, double cash);
+    void updateStockHoldingsById(int id, String ticker, int quantity);
+    void updateStockHoldingsByAccId(int accId, String ticker, int quantity);
 
     void deletePortfolioById(int id);
 
