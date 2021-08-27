@@ -16,7 +16,11 @@ import {
 import "./Home.css";
 import PortfolioChart from "../ui/PortfolioChart";
 import { deposit, withdraw } from "../service/portfolio";
-import { getUserProfile } from "../service/home";
+import {
+    getUserProfile,
+    updateDeposit,
+    updateWithdrawal,
+} from "../service/home";
 import { useState, useEffect } from "react";
 
 export default function Home() {
@@ -38,8 +42,9 @@ export default function Home() {
 
     const depositForClient = async () => {
         try {
-            await deposit(localStorage.getItem("id"), depositAmount);
+            await updateDeposit(depositAmount);
             asyncGetUserProfile();
+            setDepositOpen(false);
         } catch (err) {
             console.log(err);
         }
@@ -47,8 +52,9 @@ export default function Home() {
 
     const withdrawForClient = async () => {
         try {
-            await withdraw(localStorage.getItem("id"), withdrawAmount);
+            await updateWithdrawal(withdrawAmount);
             asyncGetUserProfile();
+            setWithdrawOpen(false);
         } catch (err) {
             console.log(err);
         }
