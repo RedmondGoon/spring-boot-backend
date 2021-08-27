@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
 import java.util.Map;
@@ -31,7 +30,6 @@ public class TradeRestController {
 //    }
 
     @GetMapping(value = "/portfolio/{idType}")
-    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseBody
     public ResponseEntity<Portfolio> getPortfolioById(@PathVariable("idType") String idType, @RequestParam int id) {
 
@@ -53,7 +51,6 @@ public class TradeRestController {
     }
 
     @GetMapping(value = "/holdings/stocks")
-    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseBody
     public ResponseEntity<Map<String, Integer>> getStockHoldingsByAccId(@RequestParam int accId) {
         Map<String, Integer> holdings = portService.getStockHoldingsByAccId(accId);
@@ -64,14 +61,12 @@ public class TradeRestController {
     }
 
     @GetMapping(value = "/holdings/{type}")
-    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseBody
     public ResponseEntity<Map<String, String>> getTotalHoldingsByAccId(@PathVariable("type") String type, @RequestParam int accId){
         return ResponseEntity.ok().body(portService.getPortfolioValueByAccId(accId, type));
     }
 
     @GetMapping(value = "/chart")
-    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseBody
     public ResponseEntity<List<Map<String, String>>> getChart(int accId){
         return ResponseEntity.ok().body(portService.getChartByAccId(accId));
@@ -102,7 +97,6 @@ public class TradeRestController {
 //    }
 
     @PutMapping(value = "/portfolio/cash/{idType}")
-    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<String> updateCashHoldings(@PathVariable("idType") String idType ,@RequestParam int id, double cash ){
         if(idType.equals("id")) {
             portService.updateCashHoldingsById(id, cash);
@@ -116,7 +110,6 @@ public class TradeRestController {
 
     }
     @PutMapping(value = "/portfolio/stock/{idType}")
-    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<String> updateStockHoldings(@PathVariable("idType") String idType ,@RequestParam int id, String ticker, int quantity){
         if(idType.equals("id")) {
             portService.updateStockHoldingsById(id, ticker, quantity);
@@ -131,7 +124,6 @@ public class TradeRestController {
     }
 
     @DeleteMapping(value = "/portfolio")
-    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseBody
     public ResponseEntity<String> deletePortfolioById(@RequestParam int id) {
         portService.deletePortfolioById(id);
@@ -141,10 +133,9 @@ public class TradeRestController {
 
 
     @PostMapping(value = "/transaction", consumes = {"application/json", "application/xml"})
-    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<String> addTransaction(@RequestBody Transaction transaction){
         TransactionActionType actionType = transaction.getActionType();
-        transaction.setExecPrice(AlphaVantage.getQuotes(transaction.getTicker()));
+        transaction.setExecPrice(AlphaVantage.getStockQuoteAWS(transaction.getTicker()));
 
         if(actionType.toString().equals("BUY")){
             double cashHolding = portService.getCashHoldingsByAccId(transaction.getAccId());
@@ -179,7 +170,6 @@ public class TradeRestController {
         return new ResponseEntity<String>("Invalid action type.", HttpStatus.BAD_REQUEST);
     }
     @GetMapping(value = "/transaction")
-    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseBody
     public ResponseEntity<Transaction> getTransactionById(@RequestParam int id) {
         Transaction transaction = tranService.getTrxById(id);
@@ -190,7 +180,6 @@ public class TradeRestController {
     }
 
     @GetMapping(value = "/transactions")
-    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseBody
     public ResponseEntity<List<Transaction>> getAllTransactionsByAccId(@RequestParam int accId) {
         List<Transaction> transactions = tranService.getAllTrxByAccId(accId);
@@ -201,14 +190,12 @@ public class TradeRestController {
     }
 
     @PutMapping(value = "/transaction", consumes = {"application/json", "application/xml"})
-    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<String> updateTransactionById(@RequestParam int id, @RequestBody Transaction transaction){
         tranService.updateTrxStatusById(id, transaction);
         return new ResponseEntity<String>("Update by ID Successful", HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/transaction")
-    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseBody
     public ResponseEntity<String> deleteTransactionById(@RequestParam int id) {
         tranService.deleteTrxById(id);

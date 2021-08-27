@@ -15,9 +15,22 @@ public class AlphaVantage {
         System.out.println(AlphaVantage.getQuotes("SE"));
         List<String> symbols= new ArrayList<>();
         symbols.add("IBM");
-        symbols.add("SE");
+        symbols.add("SPY");
         symbols.add("AAPL");
         System.out.println(AlphaVantage.getListOfStock(symbols));
+        System.out.println(AlphaVantage.getStockQuoteAWS("SPY"));
+    }
+    public static Double getStockQuoteAWS(String symbol){
+        String baseurl ="https://65yrtzxkv2.execute-api.ap-southeast-1.amazonaws.com/SinglePrice?symbol=%s";
+        String apiurl = String.format(baseurl, symbol);
+        try {
+            JSONObject msg = JsonReader.readJsonFromUrl(apiurl);
+            double price =Double.parseDouble( msg.get("price").toString());
+            return price;
+        }catch (Exception e){
+            System.out.println("Json Error");
+        }
+        return  null;
     }
     public JSONObject getStockQuote (String symbol){
 
@@ -26,7 +39,6 @@ public class AlphaVantage {
 
         try {
             JSONObject msg = JsonReader.readJsonFromUrl(apiurl);
-            System.out.println(msg);
             JSONObject quote= msg.getJSONObject("Global Quote");
             return quote;
         } catch (IOException e) {
@@ -42,14 +54,14 @@ public class AlphaVantage {
 
         for (int i =0;i <symbols.size(); i++ ){
             String symbol = symbols.get(i);
-            double this_price= AlphaVantage.getQuotes(symbol);
+            double this_price= AlphaVantage.getStockQuoteAWS(symbol);
             priceList.put(symbol,this_price);
 
         }
         return priceList;
     }
     public static Double getQuotes(String symbol){
-        String apikey= "6V13XDYNA54NWY7U";
+        String apikey= "DKPTD0M35AWT42WD";
         AlphaVantage api = new AlphaVantage(apikey);
         JSONObject stockQuote=  api.getStockQuote(symbol);
         String priceskey = AlphaVantage.getType("price");
