@@ -15,9 +15,22 @@ public class AlphaVantage {
         System.out.println(AlphaVantage.getQuotes("SE"));
         List<String> symbols= new ArrayList<>();
         symbols.add("IBM");
-        symbols.add("SE");
+        symbols.add("SPY");
         symbols.add("AAPL");
         System.out.println(AlphaVantage.getListOfStock(symbols));
+        System.out.println(AlphaVantage.getStockQuoteAWS("SPY"));
+    }
+    public static Double getStockQuoteAWS(String symbol){
+        String baseurl ="https://65yrtzxkv2.execute-api.ap-southeast-1.amazonaws.com/SinglePrice?symbol=%s";
+        String apiurl = String.format(baseurl, symbol);
+        try {
+            JSONObject msg = JsonReader.readJsonFromUrl(apiurl);
+            double price =Double.parseDouble( msg.get("price").toString());
+            return price;
+        }catch (Exception e){
+            System.out.println("Json Error");
+        }
+        return  null;
     }
     public JSONObject getStockQuote (String symbol){
 
