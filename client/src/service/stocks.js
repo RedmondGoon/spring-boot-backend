@@ -32,28 +32,6 @@ export async function getCurrentPrice(stock) {
 export async function getHistData(stock, range) {
     console.log(stock, range);
     let res;
-    // res = {
-    //     "Mar":"150",
-    //     "Apr":"145",
-    //     "May":"130",
-    //     "Jun":"150",
-    //     "Jul":"154",
-    //     "Aug":"146",
-    //     "Sept":"150",
-    //     "Oct":"152",
-    //     "Nov":"150",
-    //     "Dec":"148",
-    //     "Jan":"145",
-    //     "Feb":"148",
-    //     "Mar20":"150",
-    //     "Apr20":"145",
-    //     "May2":"130",
-    //     "Jun2":"150",
-    //     "Jul2":"154",
-    //     "Aug2":"146",
-    //     "Sept2":"150",
-    //     "Oct2":"152",
-    // }
     if (range == 'daily') {    
         await axios.get(`https://mn7q8pqe6b.execute-api.ap-southeast-1.amazonaws.com/Prod?symbol=${stock}`)
         .then((response) => {
