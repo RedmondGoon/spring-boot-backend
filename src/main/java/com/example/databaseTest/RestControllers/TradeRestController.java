@@ -135,7 +135,7 @@ public class TradeRestController {
     @PostMapping(value = "/transaction", consumes = {"application/json", "application/xml"})
     public ResponseEntity<String> addTransaction(@RequestBody Transaction transaction){
         TransactionActionType actionType = transaction.getActionType();
-        transaction.setExecPrice(AlphaVantage.getQuotes(transaction.getTicker()));
+        transaction.setExecPrice(AlphaVantage.getStockQuoteAWS(transaction.getTicker()));
 
         if(actionType.toString().equals("BUY")){
             double cashHolding = portService.getCashHoldingsByAccId(transaction.getAccId());
