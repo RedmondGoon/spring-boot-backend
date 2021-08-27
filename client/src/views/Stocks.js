@@ -44,7 +44,7 @@ export default function Stocks() {
     let tempRange;
     const [range, setRange] = useState();
     const [price, setPrice] = useState();
-    const stock = useRef('');
+    const stock = useRef("");
 
     const [openBuy, setOpenBuy] = useState(false);
     const [openSell, setOpenSell] = useState(false);
@@ -87,15 +87,14 @@ export default function Stocks() {
                 inputRef={stock}
             />
             <Button
-            variant="contained"
-            color="primary"
-            size="small"
-            onClick={ async () => {
-                setData(await getData(stock.current.value));
-                setHistData(await getHistData(stock.current.value, range));
-                setPrice(await getCurrentPrice(stock.current.value));
-            }
-            }
+                variant="contained"
+                color="secondary"
+                size="small"
+                onClick={async () => {
+                    setData(await getData(stock.current.value));
+                    setHistData(await getHistData(stock.current.value, range));
+                    setPrice(await getCurrentPrice(stock.current.value));
+                }}
             >
                 Get Data
             </Button>
@@ -151,9 +150,7 @@ export default function Stocks() {
                                 {data == undefined ? (
                                     <Typography>{""}</Typography>
                                 ) : (
-                                    <Typography>
-                                        {price}
-                                    </Typography>   
+                                    <Typography>{price}</Typography>
                                 )}
                             </Box>
                         </CardContent>
