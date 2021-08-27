@@ -19,16 +19,14 @@ public class Transaction {
     private TransactionStatus status = TransactionStatus.CREATED;
     private TransactionActionType actionType;
 
-    @Column(name = "timestamp", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private Timestamp trxDatetime;
+//    @Column(name = "timestamp", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private String trxDatetime = java.time.LocalDateTime.now().toString();
     public Transaction(){}
 
-    public Transaction(int accId, String ticker, int quantity, double execPrice, Timestamp trxDatetime) {
+    public Transaction(int accId, String ticker, int quantity){
         this.accId = accId;
         this.ticker = ticker;
         this.quantity = quantity;
-        this.execPrice = execPrice;
-        this.trxDatetime = trxDatetime;
     }
 //    public Transaction(Account account, String ticker, int quantity, double indiPrice) {
 //        this.account = account;
@@ -89,13 +87,17 @@ public class Transaction {
         this.status = status;
     }
 
-    public Timestamp getTrxDatetime() {
+    public String getTrxDatetime() {
         return trxDatetime;
     }
 
 //    public void setTrxDatetime(Timestamp trxDatetime) {
 //        this.trxDatetime = trxDatetime;
 //    }
+
+    public void setTrxDatetime(String trxDatetime) {
+        this.trxDatetime = trxDatetime;
+    }
 
     @Override
     public String toString() {

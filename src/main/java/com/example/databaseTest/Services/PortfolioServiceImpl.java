@@ -65,6 +65,29 @@ public class PortfolioServiceImpl implements PortfolioService{
         return  getPortfolioByAccId(accId).getCashBalance();
     }
 
+
+    @Override
+    public List<List<String>> getStockBreakdownByAccId(int accId){
+        Map<String, Integer> stockHoldings = getStockHoldingsByAccId(accId);
+        List<String> listOfStock = new ArrayList<String>();
+        listOfStock.addAll(stockHoldings.keySet());
+//        double stockValue = 0;
+
+        Map<String, Double> currentStockPrices = AlphaVantage.getListOfStock(listOfStock);
+//        Map<String, String> totalValuePerTicker = new HashMap<String, String>();
+        List<List<String>> stocks = new ArrayList<List<String>>();
+
+        for(String ticker : stockHoldings.keySet()){
+            List<String> stock = new ArrayList<String>();
+
+            stock.add(ticker);
+            stock.add(String.valueOf(stockHoldings.get(ticker)));
+            stock.add(String.valueOf(currentStockPrices.get(ticker)*stockHoldings.get(ticker)));
+            stocks.add(stock);
+        }
+        return stocks;
+
+    }
     @Override
     public Map<String, String> getPortfolioValueByAccId(int accId, String type) {
 
@@ -75,10 +98,11 @@ public class PortfolioServiceImpl implements PortfolioService{
         double stockValue = 0;
 
         Map<String, Double> currentStockPrices = AlphaVantage.getListOfStock(listOfStock);
-
+        Map<String, String> totalValuePerTicker = new HashMap<String, String>();
         for(String ticker : stockHoldings.keySet()){
             stockValue += currentStockPrices.get(ticker)*stockHoldings.get(ticker);
         }
+
         Map<String, String> portfolioValue = new HashMap<String, String>();
 
         if (type.equals("Home")){
@@ -111,7 +135,7 @@ public class PortfolioServiceImpl implements PortfolioService{
 
 
         Map<String, String> value = new HashMap<String, String>();
-        value.put("x", "2017-01-06");
+        value.put("x", "2017-06-01");
         value.put("y", "1750");
         valueHistory.add(value);
 
@@ -121,7 +145,7 @@ public class PortfolioServiceImpl implements PortfolioService{
         valueHistory.add(value2);
 
         Map<String, String> value3 = new HashMap<String, String>();
-        value3.put("x", "2018-01-06");
+        value3.put("x", "2018-06-01");
         value3.put("y", "750");
         valueHistory.add(value3);
 
@@ -131,7 +155,7 @@ public class PortfolioServiceImpl implements PortfolioService{
         valueHistory.add(value4);
 
         Map<String, String> value5 = new HashMap<String, String>();
-        value5.put("x", "2019-01-06");
+        value5.put("x", "2019-06-01");
         value5.put("y", "1250");
         valueHistory.add(value5);
 
@@ -141,7 +165,7 @@ public class PortfolioServiceImpl implements PortfolioService{
         valueHistory.add(value6);
 
         Map<String, String> value7 = new HashMap<String, String>();
-        value7.put("x", "2020-01-06");
+        value7.put("x", "2020-06-01");
         value7.put("y", "2000");
         valueHistory.add(value7);
 
@@ -151,7 +175,7 @@ public class PortfolioServiceImpl implements PortfolioService{
         valueHistory.add(value8);
 
         Map<String, String> value9 = new HashMap<String, String>();
-        value9.put("x", java.time.LocalDateTime.now().toString());
+        value9.put("x", java.time.LocalDate.now().toString());
         value9.put("y", String.valueOf(stockValue+cashValue));
         valueHistory.add(value9);
 
@@ -198,27 +222,29 @@ public class PortfolioServiceImpl implements PortfolioService{
         portRepo.save(portfolio);
     }
 
-//    @Override
-//    public void updatePortfolioHoldings(PortfolioDTO portfolioDto) {
-//        Portfolio portfolio = getPortfolioByAccId(portfolioDto.getAccId());
-//        portfolio.setCashBalance(portfolioDto.getCashBalance());
-//        portfolio.setHoldings(portfolioDto.getHoldings());
-//    }
-
     @Override
-    public void updateCashHoldingsById(int id, double cash) {
+    public boolean updateCashHoldingsById(int id, double cash) {
         Portfolio portfolio = getPortfolioById(id);
+        if (cash <= 0 && (portfolio.getCashBalance() < cash*-1)){
+            return false;
+        }
         double updatedCash = portfolio.getCashBalance() + cash;
         portfolio.setCashBalance(updatedCash);
         portRepo.save(portfolio);
+        return true;
     }
 
     @Override
-    public void updateCashHoldingsByAccId(int accId, double cash) {
+    public boolean updateCashHoldingsByAccId(int accId, double cash) {
         Portfolio portfolio = getPortfolioByAccId(accId);
+        if (cash <= 0 && (portfolio.getCashBalance() < cash*-1)){
+            return false;
+        }
         double updatedCash = portfolio.getCashBalance() + cash;
         portfolio.setCashBalance(updatedCash);
         portRepo.save(portfolio);
+        return true;
+
     }
 
     @Override

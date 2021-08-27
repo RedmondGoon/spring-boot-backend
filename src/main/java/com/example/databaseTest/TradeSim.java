@@ -31,6 +31,7 @@ public class TradeSim {
 
         for(Transaction thisTransaction: foundTransactions) {
             thisTransaction.setStatus(TransactionStatus.PROCESSING);
+            thisTransaction.setTrxDatetime(java.time.LocalDateTime.now().toString());
             transRepo.save(thisTransaction);
         }
 
@@ -44,17 +45,22 @@ public class TradeSim {
         for(Transaction thisTransaction: foundTransactions) {
             if((int) (Math.random()*10) > 8) {
                 thisTransaction.setStatus(TransactionStatus.REJECTED);
+                if (thisTransaction.getActionType().toString().equals("BUY")){
+                    portfolioService.updateCashHoldingsByAccId(thisTransaction.getAccId(), thisTransaction.getExecPrice()*thisTransaction.getQuantity());
+                }
+
             }
             else {
                 thisTransaction.setStatus(TransactionStatus.FILLED);
 
                 if (thisTransaction.getActionType().toString().equals("BUY")){
-                    portfolioService.updatePortfolioHoldingsByAccId(thisTransaction.getAccId(), thisTransaction.getTicker(), thisTransaction.getQuantity(), thisTransaction.getExecPrice()*-1*thisTransaction.getQuantity());
+                    portfolioService.updatePortfolioHoldingsByAccId(thisTransaction.getAccId(), thisTransaction.getTicker(), thisTransaction.getQuantity(), 0);
                 }
                 else if (thisTransaction.getActionType().toString().equals("SELL")){
                     portfolioService.updatePortfolioHoldingsByAccId(thisTransaction.getAccId(), thisTransaction.getTicker(), thisTransaction.getQuantity()*-1, thisTransaction.getExecPrice()*thisTransaction.getQuantity());
                 }
             }
+            thisTransaction.setTrxDatetime(java.time.LocalDateTime.now().toString());
             transRepo.save(thisTransaction);
         }
 

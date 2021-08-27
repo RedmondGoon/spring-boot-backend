@@ -17,14 +17,16 @@ public interface PortfolioService {
     double getCashHoldingsById(int id);
     Map<String, String> getPortfolioValueByAccId(int accId, String type);
     List<Map<String, String>> getChartByAccId(int accId);
+    List<List<String>> getStockBreakdownByAccId(int accId);
 
     void updatePortfolioHoldingsById(int id, String ticker, int quantity, double cash);
     void updatePortfolioHoldingsByAccId(int accId, String ticker, int quantity, double cash);
 //    void updatePortfolioHoldings(PortfolioDTO portfolioDto);
-    void updateCashHoldingsById(int id, double cash);
-    void updateCashHoldingsByAccId(int accId, double cash);
+    boolean updateCashHoldingsById(int id, double cash);
+    boolean updateCashHoldingsByAccId(int accId, double cash);
     void updateStockHoldingsById(int id, String ticker, int quantity);
     void updateStockHoldingsByAccId(int accId, String ticker, int quantity);
+
 
     void deletePortfolioById(int id);
 

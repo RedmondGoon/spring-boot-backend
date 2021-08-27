@@ -1,8 +1,9 @@
-package com.example.databaseTest.RestControllers;
+ package com.example.databaseTest.RestControllers;
 
 import com.example.databaseTest.Entities.Portfolio;
 import com.example.databaseTest.Entities.Transaction;
 import com.example.databaseTest.ExternalAPI.AlphaVantage;
+import com.example.databaseTest.Services.NewsService;
 import com.example.databaseTest.Services.PortfolioService;
 import com.example.databaseTest.Services.TransactionService;
 import com.example.databaseTest.Entities.TransactionActionType;
@@ -22,12 +23,9 @@ public class TradeRestController {
     @Autowired
     private TransactionService tranService;
 
+    @Autowired
+    private NewsService newsService;
 
-//    @PostMapping(value = "/portfolio", consumes = {"application/json", "application/xml"})
-//    public Portfolio addPortfolio(@RequestBody Portfolio portfolio){
-//        portService.addNewPortfolio(portfolio);
-//        return portfolio;
-//    }
 
     @GetMapping(value = "/portfolio/{idType}")
     @ResponseBody
@@ -52,12 +50,13 @@ public class TradeRestController {
 
     @GetMapping(value = "/holdings/stocks")
     @ResponseBody
-    public ResponseEntity<Map<String, Integer>> getStockHoldingsByAccId(@RequestParam int accId) {
-        Map<String, Integer> holdings = portService.getStockHoldingsByAccId(accId);
+    public ResponseEntity<List<List<String>>> getStockHoldingsByAccId(@RequestParam int accId) {
+        List<List<String>> holdings = portService.getStockBreakdownByAccId(accId);
         if (holdings == null)
             return ResponseEntity.notFound().build();
-        else
+        else {
             return ResponseEntity.ok().body(holdings);
+        }
     }
 
     @GetMapping(value = "/holdings/{type}")
@@ -72,39 +71,33 @@ public class TradeRestController {
         return ResponseEntity.ok().body(portService.getChartByAccId(accId));
     }
 
-
-//    @PutMapping(value = "/portfolio", consumes = {"application/json", "application/xml"})
-//    public ResponseEntity<String> updatePortfolioByAccId(@RequestBody PortfolioDTO portfolioDto){
-//        portService.updatePortfolioHoldings(portfolioDto);
-//        return new ResponseEntity<String>("Update by ID Successful", HttpStatus.OK);
-//
-//    }
-
-//    @PutMapping(value = "/portfolio/{idType}")
-//    public ResponseEntity<String> updatePortfolioHoldings(@PathVariable("idType") String idType ,@RequestParam int id, String ticker, int quantity, double cash ){
-//
-//        if(idType.equals("id")) {
-//
-//            portService.updatePortfolioHoldingsById(id, ticker, quantity, cash);
-//            return new ResponseEntity<String>("Update by ID Successful", HttpStatus.OK);
-//        }
-//        else if(idType.equals("accId")){
-//
-//            portService.updatePortfolioHoldingsByAccId(id, ticker, quantity, cash);
-//            return new ResponseEntity<String>("Update by accID Successful", HttpStatus.OK);
-//        }
-//        return new ResponseEntity<String>("Invalid Id Type", HttpStatus.BAD_REQUEST);
-//    }
+    @GetMapping(value = "/news")
+    @ResponseBody
+    public ResponseEntity<List<String>> getHeadlines(){
+        return ResponseEntity.ok().body(newsService.getLatestHeadlines());
+    }
 
     @PutMapping(value = "/portfolio/cash/{idType}")
     public ResponseEntity<String> updateCashHoldings(@PathVariable("idType") String idType ,@RequestParam int id, double cash ){
         if(idType.equals("id")) {
-            portService.updateCashHoldingsById(id, cash);
-            return new ResponseEntity<String>("Update by ID Successful", HttpStatus.OK);
+            if(portService.updateCashHoldingsById(id, cash)){
+                return new ResponseEntity<String>("Update by accID Successful", HttpStatus.OK);
+
+            }
+            else{
+                return new ResponseEntity<String>("Insufficient cash in account", HttpStatus.BAD_REQUEST);
+
+            }
         }
         else if(idType.equals("accId")){
-            portService.updateCashHoldingsByAccId(id, cash);
-            return new ResponseEntity<String>("Update by accID Successful", HttpStatus.OK);
+            if(portService.updateCashHoldingsByAccId(id, cash)){
+                return new ResponseEntity<String>("Update by accID Successful", HttpStatus.OK);
+
+            }
+            else{
+                return new ResponseEntity<String>("Insufficient cash in account", HttpStatus.BAD_REQUEST);
+
+            }
         }
         return new ResponseEntity<String>("Invalid Id Type", HttpStatus.BAD_REQUEST);
 
@@ -140,10 +133,11 @@ public class TradeRestController {
         if(actionType.toString().equals("BUY")){
             double cashHolding = portService.getCashHoldingsByAccId(transaction.getAccId());
             if(transaction.getExecPrice()*transaction.getQuantity() > cashHolding){
-                return new ResponseEntity<String>("Insufficient Cash in account", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<String>("Insufficient cash in account", HttpStatus.BAD_REQUEST);
             }
             else{
                 tranService.addNewTrx(transaction);
+                portService.updateCashHoldingsByAccId(transaction.getAccId(), transaction.getExecPrice()*-1*transaction.getQuantity());
                 return new ResponseEntity<String>("Buy order is successfully placed.", HttpStatus.OK);
             }
         }
