@@ -54,7 +54,7 @@ public class AlphaVantage {
 
         for (int i =0;i <symbols.size(); i++ ){
             String symbol = symbols.get(i);
-            double this_price= AlphaVantage.getQuotes(symbol);
+            double this_price= AlphaVantage.getStockQuoteAWS(symbol);
             priceList.put(symbol,this_price);
 
         }
