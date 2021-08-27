@@ -6,7 +6,8 @@ export async function withdraw(clientID, amount) {}
 
 export async function getAccountChart() {
     try {
-        const result = await axios.get("data/account.json");
+        // const result = await axios.get("data/account.json");
+        const result = await axios.get(`http://localhost:8080/chart?accId=1`);
         return result.data;
     } catch (err) {
         return err;
@@ -24,7 +25,10 @@ export async function getPortfolioPerformanceChart() {
 
 export async function getCompositionProfile() {
     try {
-        const res = await axios.get("data/donutChart.json");
+        const res = await axios.get(
+            "http://localhost:8080/holdings/Donut?accId=1"
+        );
+        // const res = await axios.get("data/donutChart.json");
         return res.data;
     } catch (err) {
         return err;

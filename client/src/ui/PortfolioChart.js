@@ -12,6 +12,7 @@ export default function PortfolioChart() {
 
     const asyncGetAccountChart = async () => {
         const res = await getAccountChart();
+        console.log(res);
         setAccountData(res);
     };
 

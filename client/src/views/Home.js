@@ -32,6 +32,7 @@ export default function Home() {
 
     const asyncGetUserProfile = async () => {
         let account = await getUserProfile();
+        console.log(account);
         setAccountInfo(account);
     };
 
