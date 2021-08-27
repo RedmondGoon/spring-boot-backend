@@ -59,6 +59,7 @@ public class TradeRestController {
             return ResponseEntity.ok().body(holdings);
     }
 
+
 //    @PutMapping(value = "/portfolio", consumes = {"application/json", "application/xml"})
 //    public ResponseEntity<String> updatePortfolioByAccId(@RequestBody PortfolioDTO portfolioDto){
 //        portService.updatePortfolioHoldings(portfolioDto);
@@ -128,7 +129,7 @@ public class TradeRestController {
             System.out.println(transaction.getExecPrice()*transaction.getQuantity());
             System.out.println(cashHolding);
             if(transaction.getExecPrice()*transaction.getQuantity() > cashHolding){
-                return new ResponseEntity<String>("Insufficient Cash in account", HttpStatus.OK);
+                return new ResponseEntity<String>("Insufficient Cash in account", HttpStatus.BAD_REQUEST);
             }
             else{
 //                transaction.setStatus("PENDING");
@@ -147,7 +148,7 @@ public class TradeRestController {
                 Map<String, Integer> stockHoldings = portService.getStockHoldingsByAccId(transaction.getAccId());
                 if(stockHoldings.containsKey(transaction.getTicker())) {
                     if (transaction.getQuantity() > stockHoldings.get(transaction.getTicker())) {
-                        return new ResponseEntity<String>("Insufficient stocks in account", HttpStatus.OK);
+                        return new ResponseEntity<String>("Insufficient stocks in account", HttpStatus.BAD_REQUEST);
                     } else {
 //                        transaction.setStatus("PENDING");
                         tranService.addNewTrx(transaction);

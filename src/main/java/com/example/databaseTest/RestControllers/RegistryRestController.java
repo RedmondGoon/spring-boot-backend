@@ -17,16 +17,11 @@ public class RegistryRestController {
     @Autowired
     private AccountService accService;
 
-
-
-    @Autowired
-    private PortfolioService portService;
-
     @PostMapping(value = "/account", consumes = {"application/json", "application/xml"})
-    public Account registerAccount(@RequestBody Account account){
+    @ResponseBody
+    public ResponseEntity<String> registerAccount(@RequestBody Account account){
         accService.addNewAccount(account);
-//        portService.addNewPortfolio();
-        return account;
+        return new ResponseEntity<String>("Account has been created", HttpStatus.OK);
     }
 //    @GetMapping(value = "/account")
 //    @ResponseBody
