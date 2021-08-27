@@ -11,3 +11,56 @@ export async function getUserProfile() {
         return err;
     }
 }
+
+export async function updateDeposit(cash) {
+    try {
+        const id = 1;
+        const res = await axios.put(
+            "http://localhost:8080/portfolio/cash/accId",
+            null,
+            {
+                params: {
+                    id,
+                    cash,
+                },
+            },
+            {
+                Headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Access-Control-Allow-Origin": "*",
+                },
+            }
+        );
+        console.log(res);
+        return true;
+    } catch (err) {
+        return err;
+    }
+}
+
+export async function updateWithdrawal(negCash) {
+    const cash = -negCash;
+    try {
+        const id = 1;
+        const res = await axios.put(
+            "http://localhost:8080/portfolio/cash/accId",
+            null,
+            {
+                params: {
+                    id,
+                    cash,
+                },
+            },
+            {
+                Headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Access-Control-Allow-Origin": "*",
+                },
+            }
+        );
+        console.log(res);
+        return true;
+    } catch (err) {
+        return err;
+    }
+}
