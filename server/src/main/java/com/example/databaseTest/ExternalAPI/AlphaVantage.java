@@ -26,6 +26,7 @@ public class AlphaVantage {
 
         try {
             JSONObject msg = JsonReader.readJsonFromUrl(apiurl);
+            System.out.println(msg);
             JSONObject quote= msg.getJSONObject("Global Quote");
             return quote;
         } catch (IOException e) {
@@ -48,7 +49,7 @@ public class AlphaVantage {
         return priceList;
     }
     public static Double getQuotes(String symbol){
-        String apikey= "DKPTD0M35AWT42WD";
+        String apikey= "6V13XDYNA54NWY7U";
         AlphaVantage api = new AlphaVantage(apikey);
         JSONObject stockQuote=  api.getStockQuote(symbol);
         String priceskey = AlphaVantage.getType("price");

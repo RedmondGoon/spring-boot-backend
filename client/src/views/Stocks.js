@@ -26,7 +26,7 @@ import {
     getHistData,
     buyStock,
     sellStock,
-    getCurrentPrice,
+    getToday,
 } from "../service/stocks";
 
 const useStyles = makeStyles({
@@ -43,7 +43,7 @@ export default function Stocks() {
     const [histData, setHistData] = useState();
     let tempRange;
     const [range, setRange] = useState();
-    const [price, setPrice] = useState();
+    const [today, setToday] = useState();
     const stock = useRef("");
 
     const [openBuy, setOpenBuy] = useState(false);
@@ -96,7 +96,7 @@ export default function Stocks() {
                         setHistData(
                             await getHistData(stock.current.value, range)
                         );
-                        setPrice(await getCurrentPrice(stock.current.value));
+                        setToday(await getToday(stock.current.value));
                     }}
                 >
                     Get Data
@@ -153,7 +153,7 @@ export default function Stocks() {
                                     {data === undefined ? (
                                         <Typography>{""}</Typography>
                                     ) : (
-                                        <Typography>{price}</Typography>
+                                        <Typography>{today["price"]}</Typography>
                                     )}
                                 </Box>
                             </CardContent>
@@ -345,13 +345,13 @@ export default function Stocks() {
                                 <StockCards
                                     title="Previous Day"
                                     key1="High"
-                                    value1={data.previousday[0].high}
+                                    value1={today["high"]}
                                     key2="Low"
-                                    value2={data.previousday[0].low}
+                                    value2={today["low"]}
                                     key3="Open"
-                                    value3={data.previousday[0].open}
+                                    value3={today["open"]}
                                     key4="Close"
-                                    value4={data.previousday[0].close}
+                                    value4=""
                                 />
                                 <Box
                                     height={20}

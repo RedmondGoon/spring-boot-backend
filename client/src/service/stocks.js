@@ -12,14 +12,16 @@ export async function getData(stock) {
     return data;
 }
 
-export async function getCurrentPrice(stock) {
+export async function getToday(stock) {
     let res;
+    console.log("HERE")
     await axios
         .get(
             `https://65yrtzxkv2.execute-api.ap-southeast-1.amazonaws.com/SinglePrice?symbol=${stock}`
         )
         .then((response) => {
-            res = response.data.price;
+            console.log(response.data)
+            res = response.data;
         })
         .catch((error) => {
             console.log(error);
@@ -30,52 +32,23 @@ export async function getCurrentPrice(stock) {
 export async function getHistData(stock, range) {
     console.log(stock, range);
     let res;
-    // res = {
-    //     "Mar":"150",
-    //     "Apr":"145",
-    //     "May":"130",
-    //     "Jun":"150",
-    //     "Jul":"154",
-    //     "Aug":"146",
-    //     "Sept":"150",
-    //     "Oct":"152",
-    //     "Nov":"150",
-    //     "Dec":"148",
-    //     "Jan":"145",
-    //     "Feb":"148",
-    //     "Mar20":"150",
-    //     "Apr20":"145",
-    //     "May2":"130",
-    //     "Jun2":"150",
-    //     "Jul2":"154",
-    //     "Aug2":"146",
-    //     "Sept2":"150",
-    //     "Oct2":"152",
-    // }
-    if (range === "daily") {
-        await axios
-            .get(
-                `https://mn7q8pqe6b.execute-api.ap-southeast-1.amazonaws.com/Prod?symbol=${stock}`
-            )
-            .then((response) => {
-                console.log(response.data);
-                res = response.data;
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    } else if (range === "weekly") {
-        await axios
-            .get(
-                `https://mn7q8pqe6b.execute-api.ap-southeast-1.amazonaws.com/Prod?symbol=${stock}`
-            )
-            .then((response) => {
-                console.log(response.data);
-                res = response.data;
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    if (range == 'daily') {    
+        await axios.get(`https://mn7q8pqe6b.execute-api.ap-southeast-1.amazonaws.com/Prod?symbol=${stock}`)
+        .then((response) => {
+            console.log(response.data);
+            res = response.data;
+        }).catch((error) => {
+            console.log(error)
+        });
+
+    } else if (range == 'weekly') {
+        await axios.get(`https://mn7q8pqe6b.execute-api.ap-southeast-1.amazonaws.com/Prod?symbol=${stock}`)
+        .then((response) => {
+            console.log(response.data);
+            res = response.data;
+        }).catch((error) => {
+            console.log(error)
+        });
     } else {
         await axios
             .get(
