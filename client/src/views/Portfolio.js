@@ -64,7 +64,7 @@ export default function Portfolio() {
             {
                 label: "",
                 data: portfolioPerformance,
-                fill: true,
+                fill: false,
                 backgroundColor: "rgba(202, 43, 81, 1)",
                 borderColor: "rgba(202, 43, 81, 1)",
             },
