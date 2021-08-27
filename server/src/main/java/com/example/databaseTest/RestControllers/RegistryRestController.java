@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.CrossOrigin;
-
 
 import java.util.Map;
 
@@ -20,7 +18,6 @@ public class RegistryRestController {
     private AccountService accService;
 
     @PostMapping(value = "/account", consumes = {"application/json", "application/xml"})
-    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseBody
     public ResponseEntity<String> registerAccount(@RequestBody Account account){
         accService.addNewAccount(account);
@@ -37,7 +34,6 @@ public class RegistryRestController {
 //    }
 
     @GetMapping(value = "/account")
-    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseBody
     public ResponseEntity<Map<String, String>> getAccountByEmailAndPassword(@RequestParam String email, String password) {
         Map<String, String> result = accService.getAccountDetailsByEmailAndPassword(email, password);
@@ -47,13 +43,11 @@ public class RegistryRestController {
             return ResponseEntity.ok().body(result);
     }
     @PutMapping(value = "/account", consumes = {"application/json", "application/xml"})
-    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<String> updateAccountById(@RequestParam int id, @RequestBody Account account){
         accService.updateAccountById(id, account);
         return new ResponseEntity<String>("Update by ID Successful", HttpStatus.OK);
     }
     @DeleteMapping(value = "/account")
-    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseBody
     public ResponseEntity<String> deleteAccountById(@RequestParam int id) {
         accService.deleteAccountById(id);
