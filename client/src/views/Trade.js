@@ -1,22 +1,25 @@
-import React, {useEffect} from 'react';
-import { Container } from '@material-ui/core';
+import React, {useEffect, useState} from 'react';
+import { Container, Typography } from '@material-ui/core';
 import TradesTable from '../ui/TradesTable';
+import { getTrades } from '../service/trades';
 
 export default function Trade() {
 
-    function createData(name, qty, status, price, amt) {
-        return { name, qty, status, price, amt };
-    }
-      
-    const rows = [
-        createData('AAPL', 159, "FILLED", 25, 4.0),
-        createData('IBM', 237, "FILLED", 37, 4.3),
-        createData('SE', 262, "FILLED", 24, 6.0),
-    ];
+    const [rows, setRows] = useState()
+ 
+    useEffect(async () => {
+        setRows(await getTrades());
+    }, []);
 
     return (
         <Container>
-            <TradesTable rows = {rows}/>
+            {rows == undefined ? (
+                <Typography>
+                    {""}
+                </Typography>                                                                       
+            ) : (
+                <TradesTable rows = {rows}/> 
+            )}
         </Container>
     );
 }

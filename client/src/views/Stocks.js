@@ -37,7 +37,9 @@ export default function Stocks() {
     
     const [data, setData] = useState();
     const [histData, setHistData] = useState();
+    let tempRange;
     const [range, setRange] = useState();
+    const [price, setPrice] = useState();
     const stock = useRef('');
 
     const [openBuy, setOpenBuy] = useState(false);
@@ -84,10 +86,10 @@ export default function Stocks() {
             variant="contained"
             color="primary"
             size="small"
-            onClick={() => {
-                setData(getData(stock.current.value));
-                setHistData(getHistData(stock.current.value, range));
-                // getCurrentPrice(stock.current.value);
+            onClick={ async () => {
+                setData(await getData(stock.current.value));
+                setHistData(await getHistData(stock.current.value, range));
+                setPrice(await getCurrentPrice(stock.current.value));
             }
             }
             >
@@ -107,7 +109,7 @@ export default function Stocks() {
                                     </Typography>                                                                       
                                 ) : (
                                     <Typography>
-                                       {data.current}
+                                        {price}
                                     </Typography>   
                                 )}
                             </Box>
