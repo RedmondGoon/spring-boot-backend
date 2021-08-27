@@ -1,35 +1,37 @@
 # Spring Project 
 
 # API Documentation :
-##  POST /trade/trade:
+##  POST /transaction:
 ___
 This API is for client to place a trade. the api will return a string. 
-The request body should be in JSON as the example below
+The request body should look as follows:
 <code>
 {
     
-        "userid": 1, 
+        "accId": 1, 
         "ticker": "IBM",
-        "price": 1010000.2,
-        "volume":130,
-        "type": "BUY"
+        "quantity": 4,
+        "execPrice": 1000.0,
+        "actionType": "BUY"
    
 
 }
 </code>
 
-The API will either "Sell successful" , "Buy successful", or "Transaction Unsuccessful"
+Successful requests will have a response string of "Sell order successfully placed" , or "Buy order successfully placed".
 
 
-## POST /user/newuser
+## POST /account
 ____
-This API is used to create a new users, The API will return "save" if succesful. The request
-should be in JSON in the following format.
-
+This API is used to create a new account, The API will return "save" account if successful. The request body should look as follows:
 <code>
 {
-	"name": "Jayi",
-	"email": "Nic@someemail.com",
-	"balance":100000
+    
+        "password": "123", 
+        "firstName": "Redmond",
+        "lastName": "Goon",
+        "email": "redmond_g@hotmail.com"
+   
+
 }
 </code>
